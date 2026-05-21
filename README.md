@@ -15,7 +15,8 @@ Bir organizasyona (düğün, mekan vs.) kaç masa, kaç buket, kaç adet serbest
 - Aynı şey **buketler** için: "Bir bukette 5 lisianthus + 5 karanfil" → kaç buket?
 - **Serbest malzeme** ekleyebilirsin: "1 çuval yosun", "5 demet pembe lisianthus".
 - **Toplam envanter** anlık olarak yan panelde ve `/envanter` özet sayfasında görünür.
-- Her çiçeğe **görsel** ekleyebilirsin → mood board'a bakarken hatırlatıcı.
+- Her çiçeğe **görsel** ekleyebilirsin → mood board'a bakarken hatırlatıcı
+  (32 hazır çiçek için Wikimedia Commons'tan CC-lisanslı fotoğraflar gelir).
 
 ## Ekran haritası
 
@@ -36,9 +37,10 @@ cp .env.example .env
 php artisan key:generate
 
 # .env içinde DB ayarlarını gir
-php artisan migrate --seed   # 32 hazır çiçek tipi seed'lenir
+php artisan migrate --seed              # 32 hazır çiçek tipi seed'lenir
 php artisan storage:link
-php artisan serve            # http://127.0.0.1:8000
+php artisan flowers:download-images     # opsiyonel: Wikimedia'dan görselleri çek
+php artisan serve                       # http://127.0.0.1:8000
 ```
 
 PHP 8.2+, MariaDB/MySQL gerekir. Frontend için derleme adımı yok — Tailwind CDN.
