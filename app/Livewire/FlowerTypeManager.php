@@ -50,9 +50,9 @@ class FlowerTypeManager extends Component
 
         if ($this->image) {
             if ($flower->image_path) {
-                Storage::disk('public')->delete($flower->image_path);
+                Storage::disk()->delete($flower->image_path);
             }
-            $flower->image_path = $this->image->store('flowers', 'public');
+            $flower->image_path = $this->image->store('flowers');
         }
 
         $flower->save();
@@ -76,7 +76,7 @@ class FlowerTypeManager extends Component
     {
         $flower = FlowerType::findOrFail($id);
         if ($flower->image_path) {
-            Storage::disk('public')->delete($flower->image_path);
+            Storage::disk()->delete($flower->image_path);
             $flower->image_path = null;
             $flower->save();
         }
@@ -86,7 +86,7 @@ class FlowerTypeManager extends Component
     {
         $flower = FlowerType::findOrFail($id);
         if ($flower->image_path) {
-            Storage::disk('public')->delete($flower->image_path);
+            Storage::disk()->delete($flower->image_path);
         }
         $flower->delete();
         session()->flash('flash', 'Çiçek silindi.');

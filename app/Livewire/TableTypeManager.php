@@ -80,9 +80,9 @@ class TableTypeManager extends Component
 
             if ($this->image) {
                 if ($table->image_path) {
-                    Storage::disk('public')->delete($table->image_path);
+                    Storage::disk()->delete($table->image_path);
                 }
-                $table->image_path = $this->image->store('tables', 'public');
+                $table->image_path = $this->image->store('tables');
             }
             $table->save();
 
@@ -121,7 +121,7 @@ class TableTypeManager extends Component
     {
         $type = TableType::findOrFail($id);
         if ($type->image_path) {
-            Storage::disk('public')->delete($type->image_path);
+            Storage::disk()->delete($type->image_path);
         }
         $type->delete();
         session()->flash('flash', 'Masa tipi silindi.');

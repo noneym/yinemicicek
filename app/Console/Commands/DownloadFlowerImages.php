@@ -50,7 +50,7 @@ class DownloadFlowerImages extends Command
 
     public function handle(): int
     {
-        $disk = Storage::disk('public');
+        $disk = Storage::disk();
         $disk->makeDirectory('flowers');
 
         $flowers = FlowerType::orderBy('id')->get();

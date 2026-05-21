@@ -76,9 +76,9 @@ class BouquetTypeManager extends Component
 
             if ($this->image) {
                 if ($bouquet->image_path) {
-                    Storage::disk('public')->delete($bouquet->image_path);
+                    Storage::disk()->delete($bouquet->image_path);
                 }
-                $bouquet->image_path = $this->image->store('bouquets', 'public');
+                $bouquet->image_path = $this->image->store('bouquets');
             }
             $bouquet->save();
 
@@ -116,7 +116,7 @@ class BouquetTypeManager extends Component
     {
         $type = BouquetType::findOrFail($id);
         if ($type->image_path) {
-            Storage::disk('public')->delete($type->image_path);
+            Storage::disk()->delete($type->image_path);
         }
         $type->delete();
         session()->flash('flash', 'Buket tipi silindi.');

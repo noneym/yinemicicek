@@ -1,7 +1,7 @@
 # YineMiÇiçek 🌸
 
 Çiçek dükkanı / event florist için sipariş & envanter hesaplama uygulaması.
-**Laravel 10 + Livewire 3 + MariaDB**, tek bir `Dockerfile` ile deploy.
+**Laravel 10 + Livewire 3 + MariaDB + Cloudflare R2**, tek bir `Dockerfile` ile deploy.
 
 Web: [yinemicicek.com](https://yinemicicek.com)
 
@@ -38,12 +38,20 @@ php artisan key:generate
 
 # .env içinde DB ayarlarını gir
 php artisan migrate --seed              # 32 hazır çiçek tipi seed'lenir
-php artisan storage:link
 php artisan flowers:download-images     # opsiyonel: Wikimedia'dan görselleri çek
 php artisan serve                       # http://127.0.0.1:8000
 ```
 
 PHP 8.2+, MariaDB/MySQL gerekir. Frontend için derleme adımı yok — Tailwind CDN.
+
+## Görsel depolama (Cloudflare R2)
+
+Tüm görsel uploadları **Cloudflare R2** bucket'ına gider (S3-uyumlu).
+- `.env` içinde `R2_*` değişkenlerini doldur (`R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`,
+  `R2_BUCKET`, `R2_ENDPOINT`, `R2_PUBLIC_URL`).
+- `FILESYSTEM_DISK=r2` yapılınca `Storage::url($flower->image_path)` direkt
+  custom domain'i (örn. `https://images.yinemicicek.com/flowers/yosun.jpg`) döner.
+- Yerel diskten R2'ye geçiş için: `php artisan media:migrate-to-r2 --from=public`
 
 ## Docker ile deploy
 
