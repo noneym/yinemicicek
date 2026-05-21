@@ -13,7 +13,7 @@ ENV APP_ENV=production \
 RUN apt-get update && apt-get install -y --no-install-recommends \
         git curl unzip ca-certificates \
         libzip-dev libpng-dev libjpeg-dev libfreetype6-dev libonig-dev \
-        libxml2-dev libcurl4-openssl-dev pkg-config \
+        libxml2-dev libcurl4-openssl-dev libicu-dev pkg-config \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql mysqli mbstring exif pcntl bcmath gd zip opcache intl \
