@@ -18,6 +18,7 @@ class BouquetTypeManager extends Component
 {
     use WithFileUploads;
 
+    public bool $modalOpen = false;
     public ?int $editingId = null;
     public string $name = '';
     public ?string $description = null;
@@ -40,6 +41,36 @@ class BouquetTypeManager extends Component
     public function mount(): void
     {
         $this->lines = [['flower_type_id' => null, 'quantity_per_bouquet' => null]];
+    }
+
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->modalOpen = true;
+    }
+
+    public function edit(int $id): void
+    {
+        $type = BouquetType::with('flowerLines')->findOrFail($id);
+        $this->editingId    = $type->id;
+        $this->name         = $type->name;
+        $this->description  = $type->description;
+        $this->image        = null;
+        $this->lines = $type->flowerLines->map(fn ($l) => [
+            'flower_type_id'        => $l->flower_type_id,
+            'quantity_per_bouquet'  => (float) $l->quantity_per_bouquet,
+        ])->all();
+        if (empty($this->lines)) {
+            $this->addLine();
+        }
+        $this->resetErrorBag();
+        $this->modalOpen = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->modalOpen = false;
+        $this->resetForm();
     }
 
     public function addLine(): void
@@ -92,24 +123,8 @@ class BouquetTypeManager extends Component
             }
         });
 
-        $this->resetForm();
+        $this->closeModal();
         session()->flash('flash', 'Buket tipi kaydedildi.');
-    }
-
-    public function edit(int $id): void
-    {
-        $type = BouquetType::with('flowerLines')->findOrFail($id);
-        $this->editingId    = $type->id;
-        $this->name         = $type->name;
-        $this->description  = $type->description;
-        $this->image        = null;
-        $this->lines = $type->flowerLines->map(fn ($l) => [
-            'flower_type_id'        => $l->flower_type_id,
-            'quantity_per_bouquet'  => (float) $l->quantity_per_bouquet,
-        ])->all();
-        if (empty($this->lines)) {
-            $this->addLine();
-        }
     }
 
     public function delete(int $id): void
@@ -126,6 +141,7 @@ class BouquetTypeManager extends Component
     {
         $this->reset(['editingId', 'name', 'description', 'image']);
         $this->lines = [['flower_type_id' => null, 'quantity_per_bouquet' => null]];
+        $this->resetErrorBag();
     }
 
     public function render()

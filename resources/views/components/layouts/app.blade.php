@@ -99,7 +99,6 @@
         </footer>
     </div>
 
-    @livewireScripts
-    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    @livewireScripts {{-- Livewire 3 already bundles Alpine.js; do NOT load it again --}}
 </body>
 </html>

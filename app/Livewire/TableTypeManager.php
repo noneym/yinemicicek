@@ -18,6 +18,7 @@ class TableTypeManager extends Component
 {
     use WithFileUploads;
 
+    public bool $modalOpen = false;
     public ?int $editingId = null;
     public string $name = '';
     public ?string $description = null;
@@ -44,6 +45,37 @@ class TableTypeManager extends Component
         $this->lines = [['flower_type_id' => null, 'quantity_per_table' => null]];
     }
 
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->modalOpen = true;
+    }
+
+    public function edit(int $id): void
+    {
+        $type = TableType::with('flowerLines')->findOrFail($id);
+        $this->editingId    = $type->id;
+        $this->name         = $type->name;
+        $this->description  = $type->description;
+        $this->sponge_count = $type->sponge_count;
+        $this->image        = null;
+        $this->lines = $type->flowerLines->map(fn ($l) => [
+            'flower_type_id'      => $l->flower_type_id,
+            'quantity_per_table'  => (float) $l->quantity_per_table,
+        ])->all();
+        if (empty($this->lines)) {
+            $this->addLine();
+        }
+        $this->resetErrorBag();
+        $this->modalOpen = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->modalOpen = false;
+        $this->resetForm();
+    }
+
     public function addLine(): void
     {
         $this->lines[] = ['flower_type_id' => null, 'quantity_per_table' => null];
@@ -60,7 +92,6 @@ class TableTypeManager extends Component
 
     public function save(): void
     {
-        // Filter out completely empty lines
         $this->lines = array_values(array_filter(
             $this->lines,
             fn ($l) => !empty($l['flower_type_id']) && (float) ($l['quantity_per_table'] ?? 0) > 0
@@ -96,25 +127,8 @@ class TableTypeManager extends Component
             }
         });
 
-        $this->resetForm();
+        $this->closeModal();
         session()->flash('flash', 'Masa tipi kaydedildi.');
-    }
-
-    public function edit(int $id): void
-    {
-        $type = TableType::with('flowerLines')->findOrFail($id);
-        $this->editingId    = $type->id;
-        $this->name         = $type->name;
-        $this->description  = $type->description;
-        $this->sponge_count = $type->sponge_count;
-        $this->image        = null;
-        $this->lines = $type->flowerLines->map(fn ($l) => [
-            'flower_type_id'      => $l->flower_type_id,
-            'quantity_per_table'  => (float) $l->quantity_per_table,
-        ])->all();
-        if (empty($this->lines)) {
-            $this->addLine();
-        }
     }
 
     public function delete(int $id): void
@@ -132,6 +146,7 @@ class TableTypeManager extends Component
         $this->reset(['editingId', 'name', 'description', 'image']);
         $this->sponge_count = 1;
         $this->lines = [['flower_type_id' => null, 'quantity_per_table' => null]];
+        $this->resetErrorBag();
     }
 
     public function render()

@@ -16,6 +16,7 @@ class FlowerTypeManager extends Component
 {
     use WithFileUploads;
 
+    public bool $modalOpen = false;
     public ?int $editingId = null;
     public string $name = '';
     public string $color = '';
@@ -38,6 +39,31 @@ class FlowerTypeManager extends Component
         ];
     }
 
+    public function openCreate(): void
+    {
+        $this->resetForm();
+        $this->modalOpen = true;
+    }
+
+    public function edit(int $id): void
+    {
+        $flower = FlowerType::findOrFail($id);
+        $this->editingId = $flower->id;
+        $this->name  = $flower->name;
+        $this->color = $flower->color ?? '';
+        $this->unit  = $flower->unit ?? 'adet';
+        $this->notes = $flower->notes;
+        $this->image = null;
+        $this->resetErrorBag();
+        $this->modalOpen = true;
+    }
+
+    public function closeModal(): void
+    {
+        $this->modalOpen = false;
+        $this->resetForm();
+    }
+
     public function save(): void
     {
         $data = $this->validate();
@@ -57,19 +83,8 @@ class FlowerTypeManager extends Component
 
         $flower->save();
 
-        $this->resetForm();
+        $this->closeModal();
         session()->flash('flash', 'Çiçek kaydedildi.');
-    }
-
-    public function edit(int $id): void
-    {
-        $flower = FlowerType::findOrFail($id);
-        $this->editingId = $flower->id;
-        $this->name  = $flower->name;
-        $this->color = $flower->color ?? '';
-        $this->unit  = $flower->unit ?? 'adet';
-        $this->notes = $flower->notes;
-        $this->image = null;
     }
 
     public function removeImage(int $id): void
@@ -96,6 +111,7 @@ class FlowerTypeManager extends Component
     {
         $this->reset(['editingId', 'name', 'color', 'unit', 'notes', 'image']);
         $this->unit = 'adet';
+        $this->resetErrorBag();
     }
 
     public function render()
