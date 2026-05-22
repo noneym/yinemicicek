@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InventoryPdfController;
 use App\Livewire\BouquetTypeManager;
 use App\Livewire\FlowerTypeManager;
 use App\Livewire\InventorySummary;
@@ -13,6 +14,7 @@ Route::redirect('/', '/siparis');
 Route::get('/organizasyonlar', OrganizationManager::class)->name('organizations');
 Route::get('/siparis', OrderEntry::class)->name('orders');
 Route::get('/envanter', InventorySummary::class)->name('inventory');
+Route::get('/envanter/{organization}/pdf', InventoryPdfController::class)->name('inventory.pdf');
 Route::get('/ayarlar/cicekler', FlowerTypeManager::class)->name('flowers');
 Route::get('/ayarlar/masalar', TableTypeManager::class)->name('tables');
 Route::get('/ayarlar/buketler', BouquetTypeManager::class)->name('bouquets');

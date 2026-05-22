@@ -100,5 +100,64 @@
     </div>
 
     @livewireScripts {{-- Livewire 3 already bundles Alpine.js; do NOT load it again --}}
+
+    {{-- Global Alpine bileşen kayıtları (her sayfada baştan yüklensin) --}}
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('searchableSelect', (config) => ({
+                open: false,
+                search: '',
+                selected: config.selected ?? null,
+                options: config.options ?? [],
+                highlightIndex: 0,
+
+                get filtered() {
+                    const q = this.search.trim().toLowerCase();
+                    if (!q) return this.options;
+                    return this.options.filter(o => (o.label || '').toLowerCase().includes(q));
+                },
+                get selectedOption() {
+                    if (this.selected === null || this.selected === '' || this.selected === undefined) return null;
+                    return this.options.find(o => String(o.value) === String(this.selected)) || null;
+                },
+                toggle() { this.open ? this.close() : this.openMenu(); },
+                openMenu() {
+                    this.open = true;
+                    this.highlightIndex = 0;
+                    this.$nextTick(() => this.$refs.search?.focus());
+                },
+                close() {
+                    this.open = false;
+                    this.search = '';
+                },
+                select(value) {
+                    this.selected = value;
+                    this.close();
+                },
+                highlightNext() {
+                    if (!this.open) this.openMenu();
+                    if (this.filtered.length === 0) return;
+                    this.highlightIndex = (this.highlightIndex + 1) % this.filtered.length;
+                    this.scrollToHighlighted();
+                },
+                highlightPrev() {
+                    if (!this.open) this.openMenu();
+                    if (this.filtered.length === 0) return;
+                    this.highlightIndex = (this.highlightIndex - 1 + this.filtered.length) % this.filtered.length;
+                    this.scrollToHighlighted();
+                },
+                selectHighlighted() {
+                    const opt = this.filtered[this.highlightIndex];
+                    if (opt) this.select(opt.value);
+                },
+                scrollToHighlighted() {
+                    this.$nextTick(() => {
+                        const el = this.$refs.list?.children?.[this.highlightIndex];
+                        el?.scrollIntoView({ block: 'nearest' });
+                    });
+                },
+            }));
+        });
+    </script>
 </body>
 </html>

@@ -47,9 +47,15 @@
         </div>
 
         <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                 <h2 class="text-lg font-bold text-slate-900">🌸 Toplam Çiçek İhtiyacı</h2>
-                <button onclick="window.print()" class="text-xs bg-slate-700 hover:bg-slate-800 text-white rounded-lg px-3 py-1.5">🖨️ Yazdır</button>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('inventory.pdf', ['organization' => $organization->id]) }}"
+                       class="text-xs bg-rose-600 hover:bg-rose-700 text-white rounded-lg px-3 py-1.5 inline-flex items-center gap-1 shadow-sm">
+                        📄 PDF İndir <span class="text-rose-200 text-[10px]">(müşteriye)</span>
+                    </a>
+                    <button onclick="window.print()" class="text-xs bg-slate-700 hover:bg-slate-800 text-white rounded-lg px-3 py-1.5">🖨️ Yazdır</button>
+                </div>
             </div>
             @if (empty($inventory))
                 <div class="text-center text-slate-400 py-8">Hesaplanacak bir şey yok.</div>
