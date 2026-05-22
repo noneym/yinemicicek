@@ -64,11 +64,10 @@ return [
     */
 
     'temporary_file_upload' => [
-        // FILESYSTEM_DISK=r2 olduğu için null bırakırsa Livewire temp uploadları
-        // direkt R2'ye presigned URL ile gönderiyor → R2 CORS gerektiriyor.
-        // Daha temizi: temp dosyalar yerelde tutulsun, sadece final dosyalar
-        // (->store('flowers')) R2'ye yüklensin.
-        'disk' => 'local',     // Example: 'local', 's3'              | Default: 'default'
+        // null bırakılırsa default disk (r2) kullanılır: browser → R2 direkt PUT
+        // (R2 bucket'ta CORS şart). Local dev'de CORS yoksa 'local' yapın.
+        // Yönetim: .env içinden LIVEWIRE_TMP_DISK ile (local: 'local', prod: boş bırak).
+        'disk' => env('LIVEWIRE_TMP_DISK'),  // Example: 'local', 's3'  | Default: filesystems.default
         'rules' => null,       // Example: ['file', 'mimes:png,jpg']  | Default: ['required', 'file', 'max:12288'] (12MB)
         'directory' => null,   // Example: 'tmp'                      | Default: 'livewire-tmp'
         'middleware' => null,  // Example: 'throttle:5,1'             | Default: 'throttle:60,1'
