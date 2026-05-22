@@ -62,7 +62,7 @@
                 <div class="sm:col-span-3">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Görsel</label>
                     <div class="flex items-start gap-3">
-                        @if ($editingId)
+                        @if ($editingId && !$image)
                             @php $current = \App\Models\TableType::find($editingId); @endphp
                             @if ($current?->image_url)
                                 <img src="{{ $current->image_url }}" class="w-20 h-20 rounded-lg object-cover border border-slate-200">
@@ -72,7 +72,13 @@
                             <input type="file" wire:model="image" accept="image/*" class="w-full text-xs file:rounded-lg file:border-0 file:bg-brand-100 file:text-brand-800 file:px-3 file:py-2 file:mr-2 file:cursor-pointer">
                             <div wire:loading wire:target="image" class="text-xs text-slate-500 mt-1">Yükleniyor…</div>
                             @if ($image)
-                                <img src="{{ $image->temporaryUrl() }}" class="h-20 w-20 object-cover rounded-lg mt-2 border border-slate-200">
+                                <div class="mt-2 flex items-center gap-2">
+                                    <img src="{{ $image->temporaryUrl() }}" class="h-20 w-20 object-cover rounded-lg border border-emerald-300">
+                                    <div>
+                                        <div class="text-xs font-semibold text-emerald-700">Yeni görsel hazır ✓</div>
+                                        <button type="button" wire:click="$set('image', null)" class="text-xs text-rose-600 hover:underline mt-1">İptal et</button>
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>

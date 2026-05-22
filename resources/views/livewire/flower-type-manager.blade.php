@@ -79,7 +79,7 @@
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Görsel</label>
                     <div class="flex items-start gap-3">
-                        @if ($editingId)
+                        @if ($editingId && !$image)
                             @php $current = \App\Models\FlowerType::find($editingId); @endphp
                             @if ($current?->image_url)
                                 <div class="relative">
@@ -93,9 +93,12 @@
                             <div wire:loading wire:target="image" class="text-xs text-slate-500 mt-1">Yükleniyor…</div>
                             @error('image') <div class="text-rose-600 text-xs mt-1">{{ $message }}</div> @enderror
                             @if ($image)
-                                <div class="mt-2">
-                                    <span class="text-xs text-slate-600">Önizleme:</span>
-                                    <img src="{{ $image->temporaryUrl() }}" class="h-20 w-20 object-cover rounded-lg mt-1 border border-slate-200">
+                                <div class="mt-2 flex items-center gap-2">
+                                    <img src="{{ $image->temporaryUrl() }}" class="h-20 w-20 object-cover rounded-lg border border-emerald-300">
+                                    <div>
+                                        <div class="text-xs font-semibold text-emerald-700">Yeni görsel hazır ✓</div>
+                                        <button type="button" wire:click="$set('image', null)" class="text-xs text-rose-600 hover:underline mt-1">İptal et</button>
+                                    </div>
                                 </div>
                             @endif
                         </div>
