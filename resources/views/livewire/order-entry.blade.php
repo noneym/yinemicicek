@@ -223,11 +223,17 @@
                 <div class="sticky top-4 space-y-4">
                     <div class="bg-gradient-to-br from-brand-50 to-pink-100 rounded-2xl border border-pink-200 p-5 shadow-sm">
                         <h3 class="text-base font-bold text-brand-800 mb-3 flex items-center gap-2">📊 Anlık Toplam</h3>
-                        @php $inv = $order->aggregateFlowerInventory(); @endphp
+                        @php $inv = $order->aggregateFlowerInventory(); $gt = $order->grandTotal($inv); @endphp
                         @if (empty($inv))
                             <p class="text-sm text-brand-700/70">Henüz hesaplanacak bir şey yok. Masa, buket veya serbest çiçek ekle.</p>
                         @else
-                            <ul class="space-y-1.5 text-sm max-h-[60vh] overflow-y-auto pr-2">
+                            @if ($gt > 0)
+                                <div class="bg-emerald-600 text-white rounded-lg p-3 mb-3 text-center">
+                                    <div class="text-xs text-emerald-100">Toplam Maliyet</div>
+                                    <div class="text-xl font-bold font-mono">{{ number_format($gt, 2, ',', '.') }} ₺</div>
+                                </div>
+                            @endif
+                            <ul class="space-y-1.5 text-sm max-h-[55vh] overflow-y-auto pr-2">
                                 @foreach ($inv as $item)
                                     <li class="flex items-center gap-2 bg-white/70 rounded-lg p-2">
                                         @if ($item['flower']->image_url)
@@ -243,6 +249,11 @@
                                                 @endforeach
                                             </div>
                                         </div>
+                                        @if ($item['subtotal'] !== null)
+                                            <div class="font-mono text-xs font-semibold text-emerald-700 whitespace-nowrap">
+                                                {{ number_format($item['subtotal'], 2, ',', '.') }} ₺
+                                            </div>
+                                        @endif
                                     </li>
                                 @endforeach
                             </ul>

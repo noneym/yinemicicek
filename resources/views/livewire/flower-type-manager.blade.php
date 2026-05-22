@@ -27,6 +27,13 @@
                     <div class="p-2">
                         <div class="font-semibold text-sm text-slate-800 truncate" title="{{ $flower->name }}">{{ $flower->name }}</div>
                         <div class="text-xs text-slate-500">{{ $flower->color ?? '—' }} · {{ $flower->unit }}</div>
+                        @if ($flower->unit_price !== null)
+                            <div class="text-xs font-mono font-semibold text-emerald-700 mt-0.5">
+                                {{ number_format((float)$flower->unit_price, 2, ',', '.') }} ₺ <span class="text-slate-400 font-normal">/ {{ $flower->unit }}</span>
+                            </div>
+                        @else
+                            <div class="text-xs text-slate-400 italic mt-0.5">fiyat yok</div>
+                        @endif
                         <div class="flex justify-between mt-2">
                             <button wire:click="edit({{ $flower->id }})" class="text-brand-600 hover:underline text-xs font-medium">Düzenle</button>
                             <button wire:click="delete({{ $flower->id }})" wire:confirm="Silmek istediğine emin misin?" class="text-rose-600 hover:underline text-xs">Sil</button>
@@ -53,13 +60,21 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Birim *</label>
-                    <select wire:model="unit" class="w-full rounded-lg border-slate-300 focus:border-brand-500 focus:ring-brand-500">
+                    <select wire:model.live="unit" class="w-full rounded-lg border-slate-300 focus:border-brand-500 focus:ring-brand-500">
                         <option value="adet">adet</option>
                         <option value="demet">demet</option>
                         <option value="dal">dal</option>
                         <option value="çuval">çuval</option>
                         <option value="kg">kg</option>
                     </select>
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Birim Fiyat (₺ / {{ $unit ?: 'adet' }})</label>
+                    <div class="relative">
+                        <input type="number" step="0.01" min="0" wire:model="unit_price" class="w-full rounded-lg border-slate-300 focus:border-brand-500 focus:ring-brand-500 pr-12" placeholder="örn. 12.50">
+                        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">₺</span>
+                    </div>
+                    @error('unit_price') <div class="text-rose-600 text-xs mt-1">{{ $message }}</div> @enderror
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Görsel</label>

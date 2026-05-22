@@ -21,6 +21,7 @@ class FlowerTypeManager extends Component
     public string $name = '';
     public string $color = '';
     public string $unit = 'adet';
+    public ?float $unit_price = null;
     public ?string $notes = null;
 
     #[Validate('nullable|image|max:4096')]
@@ -31,11 +32,12 @@ class FlowerTypeManager extends Component
     protected function rules(): array
     {
         return [
-            'name'  => 'required|string|max:120',
-            'color' => 'nullable|string|max:60',
-            'unit'  => 'required|string|max:30',
-            'notes' => 'nullable|string|max:2000',
-            'image' => 'nullable|image|max:4096',
+            'name'        => 'required|string|max:120',
+            'color'       => 'nullable|string|max:60',
+            'unit'        => 'required|string|max:30',
+            'unit_price'  => 'nullable|numeric|min:0|max:9999999.99',
+            'notes'       => 'nullable|string|max:2000',
+            'image'       => 'nullable|image|max:4096',
         ];
     }
 
@@ -48,14 +50,15 @@ class FlowerTypeManager extends Component
     public function edit(int $id): void
     {
         $flower = FlowerType::findOrFail($id);
-        $this->editingId = $flower->id;
-        $this->name  = $flower->name;
-        $this->color = $flower->color ?? '';
-        $this->unit  = $flower->unit ?? 'adet';
-        $this->notes = $flower->notes;
-        $this->image = null;
+        $this->editingId  = $flower->id;
+        $this->name       = $flower->name;
+        $this->color      = $flower->color ?? '';
+        $this->unit       = $flower->unit ?? 'adet';
+        $this->unit_price = $flower->unit_price !== null ? (float) $flower->unit_price : null;
+        $this->notes      = $flower->notes;
+        $this->image      = null;
         $this->resetErrorBag();
-        $this->modalOpen = true;
+        $this->modalOpen  = true;
     }
 
     public function closeModal(): void
@@ -69,10 +72,11 @@ class FlowerTypeManager extends Component
         $data = $this->validate();
 
         $flower = FlowerType::find($this->editingId) ?? new FlowerType();
-        $flower->name  = $data['name'];
-        $flower->color = $data['color'] ?: null;
-        $flower->unit  = $data['unit'];
-        $flower->notes = $data['notes'] ?: null;
+        $flower->name       = $data['name'];
+        $flower->color      = $data['color'] ?: null;
+        $flower->unit       = $data['unit'];
+        $flower->unit_price = $data['unit_price'] !== null && $data['unit_price'] !== '' ? $data['unit_price'] : null;
+        $flower->notes      = $data['notes'] ?: null;
 
         if ($this->image) {
             if ($flower->image_path) {
@@ -109,7 +113,7 @@ class FlowerTypeManager extends Component
 
     public function resetForm(): void
     {
-        $this->reset(['editingId', 'name', 'color', 'unit', 'notes', 'image']);
+        $this->reset(['editingId', 'name', 'color', 'unit', 'unit_price', 'notes', 'image']);
         $this->unit = 'adet';
         $this->resetErrorBag();
     }

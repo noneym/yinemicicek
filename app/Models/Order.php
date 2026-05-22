@@ -35,7 +35,13 @@ class Order extends Model
 
     /**
      * Birim bazlı toplam çiçek envanteri.
-     * Format: [ flower_type_id => [ 'flower' => FlowerType, 'totals' => [ unit => qty ] ] ]
+     * Format: [
+     *   flower_type_id => [
+     *     'flower'   => FlowerType,
+     *     'totals'   => [ unit => qty ],
+     *     'subtotal' => ?float,   // qty * unit_price (sadece flower->unit ile birim eşleşiyorsa)
+     *   ]
+     * ]
      */
     public function aggregateFlowerInventory(): array
     {
@@ -52,7 +58,7 @@ class Order extends Model
             $unit = $unitOverride ?: ($flower->unit ?: 'adet');
             $id = $flower->id;
             if (!isset($totals[$id])) {
-                $totals[$id] = ['flower' => $flower, 'totals' => []];
+                $totals[$id] = ['flower' => $flower, 'totals' => [], 'subtotal' => null];
             }
             $totals[$id]['totals'][$unit] = ($totals[$id]['totals'][$unit] ?? 0) + $qty;
         };
@@ -90,8 +96,34 @@ class Order extends Model
             }
         }
 
+        // Subtotal hesapla: çiçeğin doğal birimiyle eşleşen miktarları fiyatla çarp.
+        foreach ($totals as $id => &$row) {
+            if ($row['flower']->unit_price === null) continue;
+            $price = (float) $row['flower']->unit_price;
+            $baseUnit = $row['flower']->unit ?: 'adet';
+            if (isset($row['totals'][$baseUnit])) {
+                $row['subtotal'] = $row['totals'][$baseUnit] * $price;
+            }
+        }
+        unset($row);
+
         uasort($totals, fn ($a, $b) => strcasecmp($a['flower']->name, $b['flower']->name));
 
         return $totals;
+    }
+
+    /**
+     * Tüm envanterin toplam TL tutarı (fiyatı tanımlı çiçeklerin subtotal'leri toplamı).
+     */
+    public function grandTotal(?array $inventory = null): float
+    {
+        $inventory ??= $this->aggregateFlowerInventory();
+        $total = 0.0;
+        foreach ($inventory as $row) {
+            if ($row['subtotal'] !== null) {
+                $total += $row['subtotal'];
+            }
+        }
+        return $total;
     }
 }

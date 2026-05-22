@@ -11,7 +11,11 @@ class FlowerType extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'color', 'unit', 'image_path', 'notes'];
+    protected $fillable = ['name', 'slug', 'color', 'unit', 'unit_price', 'image_path', 'notes'];
+
+    protected $casts = [
+        'unit_price' => 'decimal:2',
+    ];
 
     protected static function booted(): void
     {

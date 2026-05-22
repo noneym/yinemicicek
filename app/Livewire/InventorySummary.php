@@ -26,6 +26,9 @@ class InventorySummary extends Component
         $spongeCount = 0;
         $tableCount = 0;
         $bouquetCount = 0;
+        $grandTotal = 0.0;
+        $pricedCount = 0;
+        $unpricedCount = 0;
 
         if ($organization) {
             $order = Order::where('organization_id', $organization->id)
@@ -38,6 +41,10 @@ class InventorySummary extends Component
                 ->first();
             if ($order) {
                 $inventory = $order->aggregateFlowerInventory();
+                $grandTotal = $order->grandTotal($inventory);
+                foreach ($inventory as $row) {
+                    $row['subtotal'] !== null ? $pricedCount++ : $unpricedCount++;
+                }
                 foreach ($order->tables as $ot) {
                     $tableCount  += $ot->table_count;
                     $spongeCount += ($ot->tableType?->sponge_count ?? 0) * $ot->table_count;
@@ -56,6 +63,9 @@ class InventorySummary extends Component
             'spongeCount'   => $spongeCount,
             'tableCount'    => $tableCount,
             'bouquetCount'  => $bouquetCount,
+            'grandTotal'    => $grandTotal,
+            'pricedCount'   => $pricedCount,
+            'unpricedCount' => $unpricedCount,
         ]);
     }
 }

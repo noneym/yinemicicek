@@ -20,7 +20,7 @@
     </div>
 
     @if ($organization && $order)
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
                 <div class="text-xs text-slate-500">Masa</div>
                 <div class="text-2xl font-bold text-slate-900">{{ $tableCount }}</div>
@@ -36,6 +36,13 @@
             <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
                 <div class="text-xs text-slate-500">Çiçek Çeşidi</div>
                 <div class="text-2xl font-bold text-slate-900">{{ count($inventory) }}</div>
+            </div>
+            <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl border border-emerald-700 p-4 shadow-sm text-white">
+                <div class="text-xs text-emerald-100">Toplam Maliyet</div>
+                <div class="text-2xl font-bold font-mono">{{ number_format($grandTotal, 2, ',', '.') }} ₺</div>
+                @if ($unpricedCount > 0)
+                    <div class="text-xs text-emerald-100 mt-0.5">⚠️ {{ $unpricedCount }} çiçeğin fiyatı yok</div>
+                @endif
             </div>
         </div>
 
@@ -69,6 +76,16 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                @if ($item['subtotal'] !== null)
+                                    <div class="mt-2 pt-2 border-t border-slate-100">
+                                        <div class="font-mono text-sm font-bold text-emerald-700">{{ number_format($item['subtotal'], 2, ',', '.') }} ₺</div>
+                                        <div class="text-[10px] text-slate-400">{{ number_format((float)$item['flower']->unit_price, 2, ',', '.') }} ₺ / {{ $item['flower']->unit }}</div>
+                                    </div>
+                                @elseif ($item['flower']->unit_price === null)
+                                    <div class="mt-2 pt-2 border-t border-slate-100">
+                                        <div class="text-[10px] text-slate-400 italic">fiyat tanımlı değil</div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                     @endforeach
@@ -76,16 +93,25 @@
 
                 <div class="mt-6 pt-4 border-t border-slate-200 text-sm">
                     <h3 class="font-semibold text-slate-700 mb-2">📋 Düz Liste (kopyalanabilir)</h3>
-                    <textarea readonly rows="{{ min(20, count($inventory) + 2) }}" class="w-full font-mono text-xs bg-slate-50 rounded-lg border-slate-200 p-3" onclick="this.select()">@php
+                    <textarea readonly rows="{{ min(24, count($inventory) + 4) }}" class="w-full font-mono text-xs bg-slate-50 rounded-lg border-slate-200 p-3" onclick="this.select()">@php
 $lines = [];
 $lines[] = $organization->name . ' — ' . ($organization->event_date?->format('d.m.Y') ?? '');
-$lines[] = str_repeat('-', 40);
+$lines[] = str_repeat('-', 50);
 foreach ($inventory as $item) {
     $parts = [];
     foreach ($item['totals'] as $unit => $qty) {
         $parts[] = rtrim(rtrim(number_format($qty, 2, ',', '.'), '0'), ',') . ' ' . $unit;
     }
-    $lines[] = $item['flower']->name . ': ' . implode(' + ', $parts);
+    $line = $item['flower']->name . ': ' . implode(' + ', $parts);
+    if ($item['subtotal'] !== null) {
+        $line .= '  → ' . number_format($item['subtotal'], 2, ',', '.') . ' ₺';
+    }
+    $lines[] = $line;
+}
+$lines[] = str_repeat('-', 50);
+$lines[] = 'TOPLAM: ' . number_format($grandTotal, 2, ',', '.') . ' ₺';
+if ($unpricedCount > 0) {
+    $lines[] = '(Not: ' . $unpricedCount . ' çiçeğin fiyatı tanımlı değil, toplam dışında kaldı)';
 }
 echo implode("\n", $lines);
 @endphp</textarea>
