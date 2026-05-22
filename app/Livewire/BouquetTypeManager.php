@@ -32,7 +32,7 @@ class BouquetTypeManager extends Component
         return [
             'name'         => 'required|string|max:120',
             'description'  => 'nullable|string|max:2000',
-            'image'        => 'nullable|image|max:4096',
+            'image'        => 'nullable|image|max:16384',
             'lines.*.flower_type_id'        => 'required|integer|exists:flower_types,id',
             'lines.*.quantity_per_bouquet'  => 'required|numeric|min:0.01',
         ];

@@ -68,7 +68,7 @@ return [
         // (R2 bucket'ta CORS şart). Local dev'de CORS yoksa 'local' yapın.
         // Yönetim: .env içinden LIVEWIRE_TMP_DISK ile (local: 'local', prod: boş bırak).
         'disk' => env('LIVEWIRE_TMP_DISK'),  // Example: 'local', 's3'  | Default: filesystems.default
-        'rules' => null,       // Example: ['file', 'mimes:png,jpg']  | Default: ['required', 'file', 'max:12288'] (12MB)
+        'rules' => ['required', 'file', 'max:16384'],  // 16 MB
         'directory' => null,   // Example: 'tmp'                      | Default: 'livewire-tmp'
         'middleware' => null,  // Example: 'throttle:5,1'             | Default: 'throttle:60,1'
         'preview_mimes' => [   // Supported file types for temporary pre-signed file URLs...

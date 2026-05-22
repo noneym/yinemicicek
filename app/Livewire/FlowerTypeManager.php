@@ -24,7 +24,7 @@ class FlowerTypeManager extends Component
     public ?float $unit_price = null;
     public ?string $notes = null;
 
-    #[Validate('nullable|image|max:4096')]
+    #[Validate('nullable|image|max:16384')]
     public $image;
 
     public string $search = '';
@@ -37,7 +37,7 @@ class FlowerTypeManager extends Component
             'unit'        => 'required|string|max:30',
             'unit_price'  => 'nullable|numeric|min:0|max:9999999.99',
             'notes'       => 'nullable|string|max:2000',
-            'image'       => 'nullable|image|max:4096',
+            'image'       => 'nullable|image|max:16384',
         ];
     }
 

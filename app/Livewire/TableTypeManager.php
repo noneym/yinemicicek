@@ -34,7 +34,7 @@ class TableTypeManager extends Component
             'name'         => 'required|string|max:120',
             'description'  => 'nullable|string|max:2000',
             'sponge_count' => 'required|integer|min:0|max:1000',
-            'image'        => 'nullable|image|max:4096',
+            'image'        => 'nullable|image|max:16384',
             'lines.*.flower_type_id'      => 'required|integer|exists:flower_types,id',
             'lines.*.quantity_per_table'  => 'required|numeric|min:0.01',
         ];
