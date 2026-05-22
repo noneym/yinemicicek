@@ -32,12 +32,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end mb-4 bg-slate-50 p-3 rounded-xl">
                         <div class="md:col-span-7">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Masa Tipi</label>
-                            <select wire:model="newTableTypeId" class="w-full rounded-lg border-slate-300 text-sm">
-                                <option value="">— Seç —</option>
-                                @foreach ($tableTypes as $t)
-                                    <option value="{{ $t->id }}">{{ $t->name }}</option>
-                                @endforeach
-                            </select>
+                            <x-searchable-select
+                                wire:model="newTableTypeId"
+                                placeholder="— Masa tipi seç —"
+                                :options="$tableTypes->map(fn($t) => ['value' => $t->id, 'label' => $t->name, 'image' => $t->image_url])->all()"
+                            />
                             @error('newTableTypeId') <div class="text-rose-600 text-xs mt-1">{{ $message }}</div> @enderror
                             @if ($tableTypes->isEmpty())
                                 <a href="{{ route('tables') }}" class="text-xs text-brand-600 hover:underline">+ Önce masa tipi ekle</a>
@@ -85,14 +84,15 @@
                                         </div>
                                     @endforeach
                                     <div class="pt-2 mt-2 border-t border-dashed border-slate-200 flex flex-wrap gap-2 items-end">
-                                        <select wire:model="extraForm.{{ $ot->id }}.flower_type_id" class="rounded-lg border-slate-300 text-xs flex-1 min-w-[180px]">
-                                            <option value="">+ Ekstra çiçek ekle…</option>
-                                            @foreach ($flowers as $f)
-                                                <option value="{{ $f->id }}">{{ $f->name }} ({{ $f->unit }})</option>
-                                            @endforeach
-                                        </select>
-                                        <input type="number" step="0.01" min="0.01" wire:model="extraForm.{{ $ot->id }}.quantity_per_table" placeholder="adet/masa" class="rounded-lg border-slate-300 text-xs w-32">
-                                        <button wire:click="addExtra({{ $ot->id }})" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-3 py-1.5 text-xs">+ Ekle</button>
+                                        <div class="flex-1 min-w-[200px]">
+                                            <x-searchable-select
+                                                wire:model="extraForm.{{ $ot->id }}.flower_type_id"
+                                                placeholder="+ Ekstra çiçek ekle…"
+                                                :options="$flowers->map(fn($f) => ['value' => $f->id, 'label' => $f->name, 'image' => $f->image_url, 'meta' => $f->unit])->all()"
+                                            />
+                                        </div>
+                                        <input type="number" step="0.01" min="0.01" wire:model="extraForm.{{ $ot->id }}.quantity_per_table" placeholder="adet/masa" class="rounded-lg border-slate-300 text-xs w-32 py-2">
+                                        <button wire:click="addExtra({{ $ot->id }})" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-3 py-2 text-sm">+ Ekle</button>
                                     </div>
                                 </div>
                             </div>
@@ -109,12 +109,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end mb-4 bg-slate-50 p-3 rounded-xl">
                         <div class="md:col-span-7">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Buket Tipi</label>
-                            <select wire:model="newBouquetTypeId" class="w-full rounded-lg border-slate-300 text-sm">
-                                <option value="">— Seç —</option>
-                                @foreach ($bouquetTypes as $b)
-                                    <option value="{{ $b->id }}">{{ $b->name }}</option>
-                                @endforeach
-                            </select>
+                            <x-searchable-select
+                                wire:model="newBouquetTypeId"
+                                placeholder="— Buket tipi seç —"
+                                :options="$bouquetTypes->map(fn($b) => ['value' => $b->id, 'label' => $b->name, 'image' => $b->image_url])->all()"
+                            />
                             @error('newBouquetTypeId') <div class="text-rose-600 text-xs mt-1">{{ $message }}</div> @enderror
                             @if ($bouquetTypes->isEmpty())
                                 <a href="{{ route('bouquets') }}" class="text-xs text-brand-600 hover:underline">+ Önce buket tipi ekle</a>
@@ -166,12 +165,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-2 items-end mb-4 bg-slate-50 p-3 rounded-xl">
                         <div class="md:col-span-5">
                             <label class="block text-xs font-semibold text-slate-600 mb-1">Çiçek</label>
-                            <select wire:model="newLooseFlowerId" class="w-full rounded-lg border-slate-300 text-sm">
-                                <option value="">— Seç —</option>
-                                @foreach ($flowers as $f)
-                                    <option value="{{ $f->id }}">{{ $f->name }} ({{ $f->unit }})</option>
-                                @endforeach
-                            </select>
+                            <x-searchable-select
+                                wire:model="newLooseFlowerId"
+                                placeholder="— Çiçek seç —"
+                                :options="$flowers->map(fn($f) => ['value' => $f->id, 'label' => $f->name, 'image' => $f->image_url, 'meta' => $f->unit])->all()"
+                            />
                             @error('newLooseFlowerId') <div class="text-rose-600 text-xs mt-1">{{ $message }}</div> @enderror
                         </div>
                         <div class="md:col-span-2">
